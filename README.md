@@ -1,4 +1,5 @@
 # edoc-echanneling
+![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/1.png)
 
 Simple web project that made for e-channeling.
 There are 3 accounts type in this web project.
@@ -11,6 +12,9 @@ There are 3 accounts type in this web project.
     View patients details;
     
     View booking of patients;
+    
+    
+![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/4.png)
     
  
  
@@ -25,7 +29,7 @@ There are 3 accounts type in this web project.
     
     edit account settings;
     
-    
+![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/7.png)
     
   3.Patiens(Clients)
     make appointment online;
@@ -39,7 +43,7 @@ There are 3 accounts type in this web project.
     edit account settings;
     
     
-    
+![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/9.png)  
     
 If you are Admin,doctor or patient ,only have one page to login :)
 
