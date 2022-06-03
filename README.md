@@ -2,18 +2,21 @@
 
 Simple web project that made for e-channeling.
 There are 3 accounts type in this web project.
+
   1.Admin
     Admin can add doctors,edit doctors, delete doctors;
     Schedule new doctors sessions,remove sessions;
     View patients details
     View booking of patients
-    
+ 
+ 
   2.Doctors
     View their Appointment;
     view their scheduled sessions;
     view details of patients;
     delete account;
     edit account settings;
+    
     
   3.Patiens(Clients)
     make appointment online;
@@ -23,9 +26,11 @@ There are 3 accounts type in this web project.
     edit account settings;
     
     
+    
 If you are Admin,doctor or patient ,only have one page to login :)
   
 -----------------------------------------------
+
 
 # HOW TO GET STARTED
 1.INSTALL WAMP SERVER OR XAMPP SERVER OR ANY OTHER WEBUSER WHICH SUPPORT MYSQL AND PHP
