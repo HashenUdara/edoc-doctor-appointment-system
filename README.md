@@ -1,4 +1,5 @@
 # edoc-echanneling
+
 Simple web project that made for e-channeling.
 There are 3 accounts type in this web project.
   1.Admin
@@ -24,9 +25,9 @@ There are 3 accounts type in this web project.
     
 If you are Admin,doctor or patient ,only have one page to login :)
   
+-----------------------------------------------
 
-
-HOW TO GET STARTED
+# HOW TO GET STARTED
 1.INSTALL WAMP SERVER OR XAMPP SERVER OR ANY OTHER WEBUSER WHICH SUPPORT MYSQL AND PHP
 2.EXTRACT THESE FILES & FOLDERS TO 'www' FILE IN WAMP (IF YOU USE XAMPP -> 'htdocs')
 3.COPY ALL THE LINES IN 'DATABASE edoc.sql' AND PASTE IN MYSQL CONSOLE OR IMPORT IT TO phpmyadmin
@@ -38,7 +39,7 @@ HOW TO GET STARTED
 
 DATABASE NAME: 'edoc'
 
-TEST USER ACCOUNTS OF THIS PROJECT
+# BUILDIN USER ACCOUNTS OF THIS PROJECT
 
 ADMIN EMAIL:		admin@edoc.com
 ADMNIN PASSWORD:	123
