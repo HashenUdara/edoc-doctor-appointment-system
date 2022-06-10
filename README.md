@@ -121,7 +121,7 @@ MySQL Version: 		5.7.26
 
 Also available in sourcecodester.com : https://www.sourcecodester.com/hashenudara/simple-doctors-appointment-project.html
 
-#Demo video: https://youtu.be/mAWHYAHmit4
+Demo video: https://youtu.be/mAWHYAHmit4
 
 
 
