@@ -247,6 +247,9 @@
                                     echo "<tr>";
                                     for($q=0;$q<3;$q++){
                                         $row=$result->fetch_assoc();
+                                        if (!isset($row)){
+                                            break;
+                                        };
                                         $scheduleid=$row["scheduleid"];
                                         $title=$row["title"];
                                         $docname=$row["docname"];
