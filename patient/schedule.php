@@ -39,7 +39,11 @@
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
+    $sqlmain= "select * from patient where pemail=?";
+    $stmt = $database->prepare($sqlmain);
+    $stmt->bind_param("s",$useremail);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
@@ -118,7 +122,7 @@
                         //print_r($_POST);
                         
                         if(!empty($_POST["search"])){
-                            
+                            /*TODO: make and understand */
                             $keyword=$_POST["search"];
                             $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduledate>='$today' and (doctor.docname='$keyword' or doctor.docname like '$keyword%' or doctor.docname like '%$keyword' or doctor.docname like '%$keyword%' or schedule.title='$keyword' or schedule.title like '$keyword%' or schedule.title like '%$keyword' or schedule.title like '%$keyword%' or schedule.scheduledate like '$keyword%' or schedule.scheduledate like '%$keyword' or schedule.scheduledate like '%$keyword%' or schedule.scheduledate='$keyword' )  order by schedule.scheduledate asc";
                             //echo $sqlmain;

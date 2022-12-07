@@ -49,6 +49,7 @@
         if($result->num_rows==1){
             $utype=$result->fetch_assoc()['usertype'];
             if ($utype=='p'){
+                //TODO
                 $checker = $database->query("select * from patient where pemail='$email' and ppassword='$password'");
                 if ($checker->num_rows==1){
 
@@ -64,6 +65,7 @@
                 }
 
             }elseif($utype=='a'){
+                //TODO
                 $checker = $database->query("select * from admin where aemail='$email' and apassword='$password'");
                 if ($checker->num_rows==1){
 
@@ -80,6 +82,7 @@
 
 
             }elseif($utype=='d'){
+                //TODO
                 $checker = $database->query("select * from doctor where docemail='$email' and docpassword='$password'");
                 if ($checker->num_rows==1){
 

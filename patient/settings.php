@@ -46,7 +46,11 @@
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
+    $sqlmain= "select * from patient where pemail=?";
+    $stmt = $database->prepare($sqlmain);
+    $stmt->bind_param("s",$useremail);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
@@ -261,8 +265,11 @@
             </div>
             ';
         }elseif($action=='view'){
-            $sqlmain= "select * from patient where pid='$id'";
-            $result= $database->query($sqlmain);
+            $sqlmain= "select * from patient where pid=?";
+            $stmt = $database->prepare($sqlmain);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $row=$result->fetch_assoc();
             $name=$row["pname"];
             $email=$row["pemail"];
@@ -373,8 +380,11 @@
             </div>
             ';
         }elseif($action=='edit'){
-            $sqlmain= "select * from patient where pid='$id'";
-            $result= $database->query($sqlmain);
+            $sqlmain= "select * from patient where pid=?";
+            $stmt = $database->prepare($sqlmain);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $row=$result->fetch_assoc();
             $name=$row["pname"];
             $email=$row["pemail"];

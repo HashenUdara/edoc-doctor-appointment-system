@@ -18,7 +18,11 @@
 
     //import database
     include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
+    $sqlmain= "select * from patient where pemail=?";
+    $stmt = $database->prepare($sqlmain);
+    $stmt->bind_param("s",$useremail);
+    $stmt->execute();
+    $userrow = $stmt->get_result();
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
