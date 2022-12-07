@@ -299,9 +299,13 @@
             </div>
             ';
         }elseif($action=='view'){
-            $sqlmain= "select * from doctor where docid='$id'";
-            $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
+            $sqlmain = "SELECT * FROM doctor WHERE docid=?";
+            $stmt = $database->prepare($sqlmain);
+            $stmt->bind_param("i",$id);
+            $result = $stmt->execute();
+            $result=$stmt->get_result();
+            $row = $result->fetch_assoc();
+
             $name=$row["docname"];
             $email=$row["docemail"];
             $spe=$row["specialties"];
