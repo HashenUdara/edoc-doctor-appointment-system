@@ -210,10 +210,12 @@
                                     $id=$_GET["id"];
 
                                     /*TODO make and understand */
-                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=$id  order by schedule.scheduledate desc";
-
+                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=? order by schedule.scheduledate desc";
+                                    $stmt = $database->prepare($sqlmain);
+                                    $stmt->bind_param("i", $id);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
                                     //echo $sqlmain;
-                                    $result= $database->query($sqlmain);
                                     $row=$result->fetch_assoc();
                                     $scheduleid=$row["scheduleid"];
                                     $title=$row["title"];
