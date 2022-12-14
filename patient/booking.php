@@ -209,7 +209,6 @@
 
                                     $id=$_GET["id"];
 
-                                    /*TODO make and understand */
                                     $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=? order by schedule.scheduledate desc";
                                     $stmt = $database->prepare($sqlmain);
                                     $stmt->bind_param("i", $id);
