@@ -17,7 +17,10 @@ New Features
 
 > Responsive Design
 
+> Security Updates
 
+
+Feel free to add your suggestions
 # edoc-echanneling
 ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(1).png)
 
