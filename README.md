@@ -5,7 +5,7 @@
 
 ## New version coming soon
 New Features 
-> Boostrap 5 integration
+> Bootstrap 5 integration
 
 > Add email functionaliy
 
