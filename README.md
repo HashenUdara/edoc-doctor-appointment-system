@@ -3,6 +3,21 @@
 ![](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 
+## New version coming soon
+New Features 
+> Boostrap 5 integration
+
+> Add email functionaliy
+
+> Forget Password
+
+> Chart.js integration
+
+> Add ER diagram to Documentation
+
+> Responsive Design
+
+
 # edoc-echanneling
 ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(1).png)
 
