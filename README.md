@@ -1,6 +1,6 @@
 
 ## New version coming soon
-New Features 
+Theese New features are going to be added in the future
 - Bootstrap 5 or TailwindCSS integration (Choose[ CSS Framework Here](https://github.com/HashenUdara/edoc-doctor-appointment-system/discussions/29#discussion-4708768))
 - Add email functionaliy
 - Forget Password
