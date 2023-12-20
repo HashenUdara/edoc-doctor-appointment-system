@@ -1,16 +1,4 @@
 
-## New version coming soon
-These New features are going to be added in the future
-- Bootstrap 5 or TailwindCSS integration (Choose[ CSS Framework Here](https://github.com/HashenUdara/edoc-doctor-appointment-system/discussions/29#discussion-4708768))
-- Add email functionaliy
-- Forget Password
-- Chart.js integration
-- Add ER diagram to Documentation
-- Responsive Design
-- Security Updates
-
-
-Feel free to add your suggestions
 # Open Source Doctor Appointment Booking System using PHP
 ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(1).png)
 
