@@ -243,6 +243,7 @@ CREATE TABLE IF NOT EXISTS `webuser` (
 --
 -- Dumping data for table `webuser`
 --
+START TRANSACTION;
 
 INSERT INTO `webuser` (`email`, `usertype`) VALUES
 ('admin@edoc.com', 'a'),
