@@ -39,11 +39,7 @@
 
     //import database
     include("../connection.php");
-    $sqlmain= "select * from doctor where docemail=?";
-    $stmt = $database->prepare($sqlmain);
-    $stmt->bind_param("s",$useremail);
-    $stmt->execute();
-    $userrow = $stmt->get_result();
+    $userrow = $database->query("select * from doctor where docemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["docid"];
     $username=$userfetch["docname"];
@@ -112,7 +108,7 @@
 
                         if(isset($_POST["search"])){
                             $keyword=$_POST["search12"];
-                            /*TODO: make and understand */
+                            
                             $sqlmain= "select * from patient where pemail='$keyword' or pname='$keyword' or pname like '$keyword%' or pname like '%$keyword' or pname like '%$keyword%' ";
                             $selecttype="my";
                         }
@@ -350,13 +346,10 @@
     <?php 
     if($_GET){
         
-            $id=$_GET["id"];
-            $action=$_GET["action"];
-            $sqlmain= "select * from patient where pid=?";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("i",$id);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        $id=$_GET["id"];
+        $action=$_GET["action"];
+            $sqlmain= "select * from patient where pid='$id'";
+            $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
             $name=$row["pname"];
             $email=$row["pemail"];

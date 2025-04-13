@@ -1,5 +1,5 @@
 
-    <?php
+<?php
     
     
 
@@ -23,12 +23,8 @@
         
         if ($password==$cpassword){
             $error='3';
-
-            $sqlmain= "select patient.pid from patient inner join webuser on patient.pemail=webuser.email where webuser.email=?;";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("s",$email);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            $aab="select patient.pid from patient inner join webuser on patient.pemail=webuser.email where webuser.email='$email';";
+            $result= $database->query($aab);
             //$resultqq= $database->query("select * from doctor where docid='$id';");
             if($result->num_rows==1){
                 $id2=$result->fetch_assoc()["pid"];
