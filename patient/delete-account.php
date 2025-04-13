@@ -16,11 +16,7 @@
 
     //import database
     include("../connection.php");
-    $sqlmain= "select * from patient where pemail=?";
-    $stmt = $database->prepare($sqlmain);
-    $stmt->bind_param("s",$useremail);
-    $stmt->execute();
-    $userrow = $stmt->get_result();
+    $userrow = $database->query("select * from patient where pemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
@@ -30,26 +26,10 @@
         //import database
         include("../connection.php");
         $id=$_GET["id"];
-        $sqlmain= "select * from patient where pid=?";
-        $stmt = $database->prepare($sqlmain);
-        $stmt->bind_param("i",$id);
-        $stmt->execute();
-        $result001 = $stmt->get_result();
+        $result001= $database->query("select * from patient where pid=$id;");
         $email=($result001->fetch_assoc())["pemail"];
-
-        $sqlmain= "delete from webuser where email=?;";
-        $stmt = $database->prepare($sqlmain);
-        $stmt->bind_param("s",$email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-
-        $sqlmain= "delete from patient where pemail=?";
-        $stmt = $database->prepare($sqlmain);
-        $stmt->bind_param("s",$email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
+        $sql= $database->query("delete from webuser where email='$email';");
+        $sql= $database->query("delete from patient where pemail='$email';");
         //print_r($email);
         header("location: ../logout.php");
     }

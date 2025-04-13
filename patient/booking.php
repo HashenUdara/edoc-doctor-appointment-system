@@ -39,12 +39,7 @@
 
     //import database
     include("../connection.php");
-
-    $sqlmain= "select * from patient where pemail=?";
-    $stmt = $database->prepare($sqlmain);
-    $stmt->bind_param("s",$useremail);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $userrow = $database->query("select * from patient where pemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
@@ -209,12 +204,10 @@
 
                                     $id=$_GET["id"];
 
-                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=? order by schedule.scheduledate desc";
-                                    $stmt = $database->prepare($sqlmain);
-                                    $stmt->bind_param("i", $id);
-                                    $stmt->execute();
-                                    $result = $stmt->get_result();
+                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=$id  order by schedule.scheduledate desc";
+
                                     //echo $sqlmain;
+                                    $result= $database->query($sqlmain);
                                     $row=$result->fetch_assoc();
                                     $scheduleid=$row["scheduleid"];
                                     $title=$row["title"];
