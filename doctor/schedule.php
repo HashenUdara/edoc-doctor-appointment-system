@@ -174,7 +174,28 @@
                 
                 <?php
 
-                $sqlmain= "select schedule.scheduleid,schedule.title,doctor.docname,schedule.scheduledate,schedule.scheduletime,schedule.nop from schedule inner join doctor on schedule.docid=doctor.docid where doctor.docid=$userid ";
+                $sqlmain= "SELECT schedule.scheduleid, schedule.title, doctor.docname, schedule.sheduledate, schedule.scheduletime, schedule.nop";
+                           FROM schedule
+                           INNER JOIN doctor ON schedule.docid = doctor.docid
+                           WHERE doctor.docid = ?";
+
+                 $params = [$userid];
+                 $types = "i";
+
+                 if ($_POST && !empty($_POST["sheduledate"])) {
+                     $sheduledate = $_POST["sheduledate"];
+                     $sqlmain .= " AND schedule.sheduledate = ?";
+                     $params[] = $sheduledate;
+                     $types .= "s";
+                  }
+
+                  $stmt = $database->prepare($sqlmain);
+                  $stmt->bind_param($types, ...$params);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
+
+                  while ($row = $result->fetch_assoc()) {
+                  }
                     if($_POST){
                         //print_r($_POST);
                         $sqlpt1="";
