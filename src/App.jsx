@@ -15,7 +15,8 @@ export default function App(){
   const [mode,setMode]=useState("login"),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[name,setName]=useState("");
   const [appointments,setAppointments]=useState([]),[stats,setStats]=useState({patients:0,appointments:0,tests:0,revenue:0});
   const [department,setDepartment]=useState("Medicine"),[doctorName,setDoctorName]=useState("Available doctor"),[date,setDate]=useState(today()),[time,setTime]=useState("10:00"),[reason,setReason]=useState("");
-  const [patientEmail,setPatientEmail]=useState(""),[testName,setTestName]=useState("CBC"),[testPrice,setTestPrice]=useState("500");\n  const [appointmentOtp,setAppointmentOtp]=useState(""),[otpPending,setOtpPending]=useState(false);
+  const [patientEmail,setPatientEmail]=useState(""),[testName,setTestName]=useState("CBC"),[testPrice,setTestPrice]=useState("500");
+  const [appointmentOtp,setAppointmentOtp]=useState(""),[otpPending,setOtpPending]=useState(false);
 
   useEffect(()=>onAuthStateChanged(auth,async u=>{
     setUser(u);setProfile(null);setAppointments([]);
