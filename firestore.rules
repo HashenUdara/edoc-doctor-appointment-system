@@ -57,7 +57,13 @@ service cloud.firestore {
     }
     match /doctorSchedules/{id} {
       allow read: if verified();
-      allow write: if admin() || (doctor() && request.resource.data.doctorUid == request.auth.uid);
+      allow create: if admin() || (verified() && doctor()
+        && request.resource.data.doctorUid == request.auth.uid);
+      allow update: if admin() || (verified() && doctor()
+        && resource.data.doctorUid == request.auth.uid
+        && request.resource.data.doctorUid == request.auth.uid);
+      allow delete: if admin() || (verified() && doctor()
+        && resource.data.doctorUid == request.auth.uid);
     }
 
     match /consultations/{id} {
