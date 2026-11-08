@@ -1,81 +1,46 @@
+# CarePoint Hospital Management System
 
-# Open Source Doctor Appointment Booking System using PHP, MySQL
-![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(1).png)
+## Firebase project
+This repository is configured for Firebase project `mystudytracker-693d3`.
 
-[Edoc](https://github.com/HashenUdara/edoc-doctor-appointment-system/) is a Simple web project that is made for e-channeling using PHP,HTML & CSS.
-This initiative facilitates online appointment requests for clients or patients of medical establishments, including clinics and hospitals. This project can also help doctors to manage their appointment with their patients. This doctor's appointment system will organize the schedules of each patient's appointment, which will be submitted as a request to the doctor they have selected. The system comprises three key roles: administrator, doctor, and patient. The system admin will populate the list of the doctors with their specialties and along with the doctor's details and system credentials. The patients can browse the doctor's appointment system website to find a doctor that has the specialty of their needs. Patients can review the doctor's weekly schedule, enabling them to select a suitable day and time for their appointment. Subsequently, they can submit their appointment request. After that, the doctors can view all their appointments and the appointment request of the patients for their availability.
+## One-run deployment
+The GitHub Actions workflow `.github/workflows/build.yml` runs in order:
+1. Checkout and set up Node.js 22.
+2. Install frontend dependencies and build the Vite app.
+3. Install Cloud Functions dependencies and validate the function syntax.
+4. Authenticate to Google Cloud.
+5. Deploy Firestore rules/indexes and Storage rules.
+6. Deploy Cloud Functions.
+7. Deploy the built website to Firebase Hosting.
 
+Pull requests only run validation. Pushes to `main` and manual `workflow_dispatch` runs perform deployment.
 
-## Features
+### Required GitHub repository secret
+Add `FIREBASE_SERVICE_ACCOUNT` in GitHub → Settings → Secrets and variables → Actions. Its value must be the JSON key for a Google service account with permissions to deploy Firebase Hosting, Firestore rules/indexes, Storage rules and Cloud Functions to `mystudytracker-693d3`.
 
-### Admin
-  
-- Admin can add doctors, edit doctors, and delete doctors    
-- Schedule new doctors sessions, remove sessions   
-- View patients details    
-- View booking of patients    
-    
-    
- 
- 
-### Doctors
+### Required Firebase Functions secrets
+Set these once from a trusted terminal using Firebase CLI:
+```bash
+firebase use mystudytracker-693d3
+firebase functions:secrets:set SMTP_HOST
+firebase functions:secrets:set SMTP_PORT
+firebase functions:secrets:set SMTP_USER
+firebase functions:secrets:set SMTP_PASS
+firebase functions:secrets:set MAIL_FROM
+```
+Use a real SMTP provider/app password. Never commit these values.
 
-- View their Appointment
-- View their scheduled sessions
-- View details of patients
-- Delete account    
-- Edit account settings
-    
+## Appointment email OTP
+A verified patient requests a six-digit code by email. The code expires after 10 minutes, has a 60-second resend cooldown and a five-attempt limit. The server stores only a SHA-256 hash and the booking payload. The appointment is created only after successful verification. The backend enforces one appointment per normalized email address per Asia/Dhaka calendar day using a Firestore transaction. Staff-created appointments use the same daily email lock.
 
-    
-### Patients (Clients)
-  
-  - Make appointment online
-  - Create accounts themselves
-  - View their old booking
-  - Delete account
-  - Edit account settings    
+Firebase Authentication email verification remains required before requesting an appointment OTP. The OTP is an additional booking confirmation step, not a replacement for Firebase Auth verification.
 
-    
-| Admin Dashboard | Doctor Dashboard | Patient Dashboard |
-| -------| -------| -------|
-| Email: `admin@edoc.com` | Email: `doctor@edoc.com` |   Email: `patient@edoc.com` | 
-| Password: `123` |  Password: `123` |  Password: `123` |
-| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(3).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(9).png) |    ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(6).png)  |
+## Important setup
+- Enable Email/Password in Firebase Authentication.
+- Add the Firebase Hosting domain to Authentication → Settings → Authorized domains.
+- Configure SMTP secrets before deploying Functions.
+- Assign custom claims (`role=admin`, `doctor`, `receptionist`, `lab`) only through a trusted Admin SDK process. A user profile document must never be used to grant privileged access.
+- The Firebase web config is public client configuration; protect data with Security Rules and API restrictions. Do not put service-account JSON or SMTP credentials in frontend code.
 
- 
-  
------------------------------------------------
-
-
-# GET STARTED
-
-1. Open your XAMPP Control Panel and start Apache and MySQL.
-2. Extract the downloaded source code zip file.
-3. Copy the extracted source code folder and paste it into the XAMPP's "htdocs" directory.
-4. Browse the PHPMyAdmin in a browser. i.e. http://localhost/phpmyadmin
-5. Create a new database named `edoc`.
-6. Import the provided SQL file. The file is known as DATABASE edoc.sql located inside the source code root folder.
-7. Browse the Doctor's Appointment System in a browser. i.e. http://localhost/edoc-echanneling-main/.
-
-
-## Screenshots
-
-| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(1).png) | ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(2).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(3).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(4).png)|
-|--------------| --------------|   --------------|  --------------|    
-|  ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(5).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(6).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(7).png)| ![](https://github.com/hshnudr/edoc-echanneling/blob/main/Screenshots/Screenshot%20(8).png)|
-
-# The Project was developed using the following:
-
-Apache Version: 	`2.4.39`
-
-PHP Version: 		`7.3.5`
-
-Server Software: 	`Apache/2.4.39 (Win64) PHP/7.3.5`
-
-MySQL Version: 		`5.7.26`
-
-Demo video: https://youtu.be/mAWHYAHmit4
-
-
-
+## Current scope note
+The current UI is an initial portal foundation. Full consultations, prescriptions, lab order lifecycle, invoices/payments, complete analytics, staff role administration and medical-history workflows still require implementation and end-to-end testing before clinical production use. Do not use this system for real patient care until those modules, rules and operational procedures have been reviewed and tested.
