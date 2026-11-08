@@ -34,7 +34,7 @@ export default function App(){
     if(role==="admin"||role==="receptionist"){
       try{
         const [p,a,t,paid]=await Promise.all([
-          getDocs(collection(db,"patients")),getDocs(collection(db,"appointments")),getDocs(collection(db,"testOrders")),getDocs(query(collection(db,"payments"),where("status","==","paid")))
+          getDocs(collection(db,"patients")),getDocs(collection(db,"appointments")),(role==="admin"?getDocs(collection(db,"testOrders")):Promise.resolve({size:0})),getDocs(query(collection(db,"payments"),where("status","==","paid")) )
         ]);
         setStats({patients:p.size,appointments:a.size,tests:t.size,revenue:paid.docs.reduce((n,d)=>n+Number(d.data().amount||0),0)});
       }catch(e){setError(e.message)}
@@ -45,7 +45,7 @@ export default function App(){
   async function register(e){
     e.preventDefault();setBusy(true);setError("");setNotice("");
     try{
-      const cred=await createUserWithEmailAndPassword(auth,email.trim(),password);
+      const cred=await createUserWithEmailAndPassword(auth,email.trim().toLowerCase(),password);
       await sendEmailVerification(cred.user);
       // Public registration always creates a patient. Privileged roles must be assigned by a trusted administrator.
       const {setDoc,serverTimestamp}=await import("firebase/firestore");
