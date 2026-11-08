@@ -1,25 +1,152 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn(){return request.auth != null;}
-    function verified(){return signedIn() && request.auth.token.email_verified == true;}
-    function role(r){return signedIn() && request.auth.token.role == r;}
-    function admin(){return role('admin');}
+    function signedIn() { return request.auth != null; }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+    function role(name) { return signedIn() && request.auth.token.role == name; }
+    function admin() { return role('admin'); }
+    function staff() { return admin() || role('receptionist'); }
+    function doctor() { return role('doctor'); }
+    function lab() { return role('lab'); }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+
     match /users/{uid} {
-      allow read: if signedIn() && (request.auth.uid == uid || admin());
-      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.role == 'patient';
-      allow update: if admin() || (signedIn() && request.auth.uid == uid && request.resource.data.role == resource.data.role && request.resource.data.email == resource.data.email);
+      allow read: if owner(uid) || admin();
+      allow create: if owner(uid)
+        && request.resource.data.role == 'patient'
+        && request.resource.data.email == request.auth.token.email;
+      allow update: if admin() || (owner(uid)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'phone', 'address', 'dateOfBirth', 'gender', 'bloodGroup',
+          'emergencyContact', 'emailVerified', 'updatedAt'
+        ]));
       allow delete: if admin();
     }
-    match /patients/{uid} { allow read: if signedIn() && (request.auth.uid == uid || admin() || role('doctor') || role('receptionist')); allow write: if admin() || role('receptionist'); }
-    match /appointments/{id} {
-      allow read: if signedIn() && (resource.data.patientUid == request.auth.uid || admin() || role('receptionist') || (role('doctor') && resource.data.doctorUid == request.auth.uid));
-      allow create, update, delete: if false;
+
+    match /patients/{uid} {
+      allow read: if owner(uid) || admin() || staff()
+        || (doctor() && resource.data.assignedDoctorUids.hasAny([request.auth.uid]));
+      allow create, update: if admin() || staff();
+      allow delete: if admin();
     }
-    match /appointmentDailyLocks/{id} { allow read,write: if false; }
-    match /testCatalog/{id} { allow read: if verified(); allow write: if admin() || role('lab'); }
-    match /testOrders/{id} { allow read: if verified() && (resource.data.patientUid == request.auth.uid || admin() || role('doctor') || role('lab')); allow write: if admin() || role('lab') || role('doctor'); }
-    match /payments/{id} { allow read: if admin() || (signedIn() && resource.data.patientUid == request.auth.uid); allow write: if admin(); }
-    match /{document=**} { allow read,write: if false; }
+
+    match /appointments/{appointmentId} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin() || staff()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow write: if false;
+    }
+
+    match /appointmentDailyLocks/{lockId} {
+      allow read, write: if false;
+    }
+    match /appointmentOtps/{uid} {
+      allow read, write: if false;
+    }
+
+    match /departments/{id} {
+      allow read: if true;
+      allow write: if admin();
+    }
+    match /doctors/{uid} {
+      allow read: if verified();
+      allow write: if admin();
+    }
+    match /doctorSchedules/{id} {
+      allow read: if verified();
+      allow write: if admin() || (doctor() && request.resource.data.doctorUid == request.auth.uid);
+    }
+
+    match /consultations/{id} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow create: if verified() && doctor()
+        && request.resource.data.doctorUid == request.auth.uid;
+      allow update: if verified() && doctor()
+        && resource.data.doctorUid == request.auth.uid
+        && request.resource.data.patientUid == resource.data.patientUid
+        && request.resource.data.doctorUid == resource.data.doctorUid;
+      allow delete: if admin();
+    }
+    match /medicalHistory/{id} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow create: if verified() && doctor()
+        && request.resource.data.doctorUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+    match /prescriptions/{id} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow create: if verified() && doctor()
+        && request.resource.data.doctorUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /testCatalog/{id} {
+      allow read: if verified();
+      allow create, update, delete: if admin() || lab();
+    }
+    match /testOrders/{id} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin() || lab()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow create: if verified() && (
+        admin() || lab() || (doctor() && request.resource.data.doctorUid == request.auth.uid)
+      );
+      allow update: if verified() && (admin() || lab());
+      allow delete: if admin();
+    }
+    match /labReports/{id} {
+      allow read: if verified() && (
+        resource.data.patientUid == request.auth.uid || admin() || lab()
+        || (doctor() && resource.data.doctorUid == request.auth.uid)
+      );
+      allow create, update: if verified() && (admin() || lab());
+      allow delete: if admin();
+    }
+
+    match /invoices/{id} {
+      allow read: if verified() && (resource.data.patientUid == request.auth.uid || admin() || staff());
+      allow create, update: if admin() || staff();
+      allow delete: if admin();
+    }
+    match /payments/{id} {
+      allow read: if verified() && (resource.data.patientUid == request.auth.uid || admin() || staff());
+      allow create, update, delete: if admin();
+    }
+    match /notifications/{id} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow update: if signedIn() && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+      allow create: if admin();
+      allow delete: if admin();
+    }
+    match /emailLogs/{id} {
+      allow read: if admin();
+      allow write: if false;
+    }
+    match /auditLogs/{id} {
+      allow read: if admin();
+      allow write: if false;
+    }
+    match /hospitalSettings/{id} {
+      allow read: if verified();
+      allow write: if admin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }
