@@ -2,7 +2,7 @@ name: Build, validate and publish hospital website
 
 on:
   push:
-    branches: [main]
+    branches: [main, "feature/**"]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -46,33 +46,33 @@ jobs:
         run: echo "Build validation passed. Production deployment is only run from main or manually."
 
       - name: 8. Authenticate to Google Cloud
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: 9. Set up Firebase CLI
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: npm install --global firebase-tools
 
       - name: 10. Deploy Firestore rules, indexes and Storage rules
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           FIREBASE_PROJECT_ID: mystudytracker-693d3
         run: firebase deploy --only firestore:rules,firestore:indexes,storage --project "$FIREBASE_PROJECT_ID" --non-interactive
 
       - name: 11. Deploy Cloud Functions
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           FIREBASE_PROJECT_ID: mystudytracker-693d3
         run: firebase deploy --only functions --project "$FIREBASE_PROJECT_ID" --non-interactive
 
       - name: 12. Publish website to Firebase Hosting
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           FIREBASE_PROJECT_ID: mystudytracker-693d3
         run: firebase deploy --only hosting --project "$FIREBASE_PROJECT_ID" --non-interactive
 
       - name: 13. Print published website
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: echo "Firebase Hosting deployment completed for project mystudytracker-693d3."
