@@ -1,10 +1,26 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /patient-reports/{uid}/{fileName} {
-      allow read: if request.auth != null && (request.auth.uid == uid || request.auth.token.role in ['admin','doctor','lab']);
-      allow write: if request.auth != null && request.auth.token.role in ['admin','lab'] && request.resource.size < 10 * 1024 * 1024 && request.resource.contentType.matches('application/pdf|image/.*');
+    function signedIn() { return request.auth != null; }
+    function role(name) { return signedIn() && request.auth.token.role == name; }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+
+    match /patient-profiles/{uid}/{fileName} {
+      allow read: if verified() && (request.auth.uid == uid || role('admin'));
+      allow write: if verified() && request.auth.uid == uid
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
     }
-    match /{allPaths=**} { allow read,write: if false; }
+    match /patient-reports/{uid}/{fileName} {
+      allow read: if verified() && (
+        request.auth.uid == uid || role('admin') || role('lab')
+      );
+      allow write: if verified() && (role('admin') || role('lab'))
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('(application/pdf|image/(jpeg|png|webp))');
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
   }
 }
