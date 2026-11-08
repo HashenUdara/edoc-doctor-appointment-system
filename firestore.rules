@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn(){return request.auth != null;}
+    function verified(){return signedIn() && request.auth.token.email_verified == true;}
+    function role(r){return signedIn() && request.auth.token.role == r;}
+    function admin(){return role('admin');}
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || admin());
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.role == 'patient';
+      allow update: if admin() || (signedIn() && request.auth.uid == uid && request.resource.data.role == resource.data.role && request.resource.data.email == resource.data.email);
+      allow delete: if admin();
+    }
+    match /patients/{uid} { allow read: if signedIn() && (request.auth.uid == uid || admin() || role('doctor') || role('receptionist')); allow write: if admin() || role('receptionist'); }
+    match /appointments/{id} {
+      allow read: if signedIn() && (resource.data.patientUid == request.auth.uid || admin() || role('receptionist') || (role('doctor') && resource.data.doctorUid == request.auth.uid));
+      allow create, update, delete: if false;
+    }
+    match /appointmentDailyLocks/{id} { allow read,write: if false; }
+    match /testCatalog/{id} { allow read: if verified(); allow write: if admin() || role('lab'); }
+    match /testOrders/{id} { allow read: if verified() && (resource.data.patientUid == request.auth.uid || admin() || role('doctor') || role('lab')); allow write: if admin() || role('lab') || role('doctor'); }
+    match /payments/{id} { allow read: if admin() || (signedIn() && resource.data.patientUid == request.auth.uid); allow write: if admin(); }
+    match /{document=**} { allow read,write: if false; }
+  }
+}

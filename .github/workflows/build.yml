@@ -1,0 +1,35 @@
+name: Build verification
+
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      # Install without a lockfile until the project lockfile is committed.
+      - run: npm install --no-package-lock
+      - run: npm run build
+
+  functions:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-package-lock
+      - run: node --check index.js
