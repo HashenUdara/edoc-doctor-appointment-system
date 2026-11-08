@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, reload } from "firebase/auth";
 import { collection, doc, getDoc, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { auth, db } from "./firebase";
-import { getFunctions } from "firebase/functions";
-
-const functions = getFunctions(undefined, "asia-south1");
+import { auth, db, functions } from "./firebase";
 const roles = ["patient", "doctor", "receptionist", "admin", "lab"];
 const money = n => new Intl.NumberFormat("en-BD",{style:"currency",currency:"BDT",maximumFractionDigits:0}).format(Number(n||0));
 const today = () => new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Dhaka",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
