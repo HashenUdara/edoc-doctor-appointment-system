@@ -141,6 +141,10 @@ exports.verifyAppointmentOtp = onCall({ region: REGION }, async request => {
     if (!freshOtp.exists || freshOtp.data().consumed || freshOtp.data().expiresAt.toMillis() < Date.now()) {
       throw new HttpsError("deadline-exceeded", "The verification code is no longer valid.");
     }
+    // Re-check the exact code inside the transaction to close the resend/verify race.
+    if (freshOtp.data().codeHash !== sha(code)) {
+      throw new HttpsError("permission-denied", "The verification code changed. Request the latest code.");
+    }
     if (lock.exists) throw new HttpsError("already-exists", "This email already has an appointment for this Bangladesh calendar day.");
     tx.create(lockRef, {
       emailKey, patientUid: uid, date: day, appointmentId: appointmentRef.id,
@@ -208,6 +212,16 @@ exports.sendAppointmentConfirmation = onDocumentCreated({
   const ref = event.data.ref;
   const a = event.data.data();
   if (a.status !== "confirmed" || !a.patientEmail) return;
+  const claimed = await db.runTransaction(async tx => {
+    const current = await tx.get(ref);
+    if (!current.exists || ["sent", "sending"].includes(current.data().emailStatus)) return false;
+    tx.update(ref, {
+      emailStatus: "sending",
+      emailAttemptedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    return true;
+  });
+  if (!claimed) return;
   try {
     const date = new Date(a.date + "T12:00:00+06:00").toLocaleDateString("en-BD", {
       timeZone: "Asia/Dhaka", day: "numeric", month: "long", year: "numeric"
