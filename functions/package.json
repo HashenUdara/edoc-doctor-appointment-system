@@ -1,0 +1,13 @@
+{
+  "name": "hospital-functions",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0",
+    "nodemailer": "^7.0.3"
+  }
+}
