@@ -1,3 +1,11 @@
+<?php
+    session_start();
+    if(!isset($_SESSION["user"]) || $_SESSION["user"]=="" || $_SESSION["usertype"]!='p'){
+        header("location: ../login.php");
+        exit;
+    }
+    $sessionemail=$_SESSION["user"];
+?>
 
     <?php
     
@@ -5,6 +13,13 @@
 
     //import database
     include("../connection.php");
+
+    // Resolve the authenticated patient own record; ignore client-supplied identifiers
+    $ownerstmt = $database->prepare("select pid from patient where pemail=?");
+    $ownerstmt->bind_param("s",$sessionemail);
+    $ownerstmt->execute();
+    $ownerrow = $ownerstmt->get_result()->fetch_assoc();
+    $sessionpid = $ownerrow["pid"];
 
 
 
@@ -20,6 +35,9 @@
         $password=$_POST['password'];
         $cpassword=$_POST['cpassword'];
         $id=$_POST['id00'];
+        // Enforce ownership: only the logged-in patient own record may be modified
+        $id=$sessionpid;
+        $oldemail=$sessionemail;
         
         if ($password==$cpassword){
             $error='3';
